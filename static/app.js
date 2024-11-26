@@ -133,7 +133,7 @@ setInterval(() => {
     const outputDiv = document.getElementById('output');
     const now = Date.now();
 
-    if (!systemConfiguration.lastUpdate || now - systemConfiguration.lastUpdate > 10000) {
+    if (!systemConfiguration.lastUpdate || now - systemConfiguration.lastUpdate > 30000) {
         uiElemnts = `
             <div class="p-5 text-center bg-body-tertiary rounded-3">
                 <h1 class="text-body-emphasis">FERS is having connectivity issues!!!</h1>
