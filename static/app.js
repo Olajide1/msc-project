@@ -16,7 +16,7 @@ const getUIElementForNodeDevice = (nodeObject, nodeKey) => {
     const minutes = datetimeObj.getMinutes() < 10 ? `0${datetimeObj.getMinutes()}` : datetimeObj.getMinutes();
     const seconds = datetimeObj.getSeconds() < 10 ? `0${datetimeObj.getSeconds()}` : datetimeObj.getSeconds();
     return `
-        <div class="node-instance col-sm-6 col-xs-12">
+        <div class="node-instance col-md-6 col-sm-12">
             <div class="row">
                 <div class="col-12">
                     <div class="node-details-container">
