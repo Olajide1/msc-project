@@ -127,7 +127,14 @@ HTML_PAGE = """
         </div>
         <div class="row">
             <div class="col-12">
-                <div class="row" id="output"></div>
+                <div class="row" id="output">
+                    <div class="p-5 text-center bg-body-tertiary rounded-3">
+                        <h1 class="text-body-emphasis">FERS TURNED OFF!</h1>
+                        <p class="col-lg-8 mx-auto fs-5 text-muted">
+                            Turn on the Moniter to run FERS System.
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
