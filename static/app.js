@@ -67,13 +67,7 @@ const generateFeaturesMetrics = (features) => {
 
 const renderApplicationUIState = () => {
     const outputDiv = document.getElementById('output');
-    let uiElemnts = `
-        <div class="p-5 text-center bg-body-tertiary rounded-3">
-            <h1 class="text-body-emphasis">FERS TURNED OFF!</h1>
-            <p class="col-lg-8 mx-auto fs-5 text-muted">
-                Turn on the Moniter to run FERS System.
-            </p>
-        </div>`;
+    let uiElemnts = "";
 
     if (!systemConfiguration.isMonitoring) {
         uiElemnts = `
