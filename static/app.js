@@ -2,7 +2,7 @@
 let socket;
 let reconnectInterval = 1000;
 const systemConfiguration = {
-    data: null,
+    data: {},
     isMonitoring: false,
     lastUpdate: null
 };
@@ -108,9 +108,18 @@ const createWebSocket = () => {
     };
 
     socket.onmessage = function(event) {
-        systemConfiguration.data = JSON.parse(event.data); // Parse the JSON data from the server
+        console.log(JSON.parse(event.data));
+        try {
+            if (Object.keys(event.data).length > 0) {
+                systemConfiguration.data = JSON.parse(event.data); // Parse the JSON data from the server
+            } else {
+                systemConfiguration.data = {};
+            }
+        } catch(err) {
+            systemConfiguration.data = {};
+            console.log(err);
+        }
         systemConfiguration.lastUpdate = Date.now(); // Record the timestamp of the last update
-
         // Update the UI immediately
         renderApplicationUIState();
     };
@@ -133,7 +142,7 @@ setInterval(() => {
     const outputDiv = document.getElementById('output');
     const now = Date.now();
 
-    if (!systemConfiguration.lastUpdate || now - systemConfiguration.lastUpdate > 30000) {
+    if (!systemConfiguration.lastUpdate || now - systemConfiguration.lastUpdate > 20000) {
         uiElemnts = `
             <div class="p-5 text-center bg-body-tertiary rounded-3">
                 <h1 class="text-body-emphasis">FERS is having connectivity issues!!!</h1>
