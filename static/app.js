@@ -87,7 +87,7 @@ const renderApplicationUIState = () => {
         } else {
             uiElemnts = `
                 <div class="p-5 text-center bg-body-tertiary rounded-3">
-                    <h1 class="text-body-emphasis">No IoT node is connected at time.</h1>
+                    <h1 class="text-body-emphasis">No IoT node is connected to FERS at time!!!</h1>
                     <p class="col-lg-8 mx-auto fs-5 text-muted">
                         Check network connectivity to ensure the system is work properly.
                     </p>
@@ -145,7 +145,10 @@ setInterval(() => {
     if (!systemConfiguration.lastUpdate || now - systemConfiguration.lastUpdate > 20000) {
         uiElemnts = `
             <div class="p-5 text-center bg-body-tertiary rounded-3">
-                <h1 class="text-body-emphasis">FERS is having connectivity issues!!!</h1>
+                <h1 class="text-body-emphasis">No IoT node is connected to FERS at time!!!</h1>
+                <p class="col-lg-8 mx-auto fs-5 text-muted">
+                    Check network connectivity to ensure the system is work properly.
+                </p>
             </div>
         `;
     
