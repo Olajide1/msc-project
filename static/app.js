@@ -100,7 +100,8 @@ const renderApplicationUIState = () => {
 }
 
 const createWebSocket = () => {
-    socket = new WebSocket('ws://localhost:8000/ws');
+    const hostname = location.hostname;
+    socket = new WebSocket(`ws://${hostname}:8000/ws`);
 
     socket.onopen = function(event) {
         console.log('WebSocket connection established.');
