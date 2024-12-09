@@ -1,4 +1,5 @@
 import asyncio
+import time
 import paho.mqtt.client as mqtt
 from fastapi import FastAPI, WebSocket
 from fastapi.responses import HTMLResponse
@@ -26,6 +27,31 @@ device_params = {
     "timestamp": None
 }
 
+# Metrics tracking
+throughput_count = 0
+latencies = []
+start_time = time.time()
+
+def calculate_throughput():
+    global throughput_count, start_time
+    current_time = time.time()
+    elapsed_time = current_time - start_time
+    if elapsed_time > 0:
+        throughput = throughput_count / elapsed_time
+        throughput_message = f"Throughput: {throughput:.2f} messages/second"
+    else:
+        throughput_message = "Throughput: Calculating..."
+
+    return throughput_message
+
+def calculate_average_latency():
+    if latencies:
+        avg_latency = sum(latencies) / len(latencies)
+        avg_latency_message = f"Average Latency: {avg_latency:.4f} seconds"
+    else:
+        avg_latency_message = "Average Latency: No data yet."
+    
+    return avg_latency_message
 
 class AnalyseSensorData():
     
@@ -122,7 +148,11 @@ HTML_PAGE = """
                     </label>
                     <span>Monitor</span>
                 </div>
-                <div class="watch" id="system-watch"></div>
+                <div class="timer-wrapper">
+                    <div class="latency metric"></div>
+                    <div class="watch" id="system-watch"></div>
+                    <div class="through-put metric"></div>
+                </div>
             </div>
         </div>
         <div class="row">
@@ -159,6 +189,9 @@ def on_connect(client, userdata, flags, rc, properties):
     client.subscribe("Remote/FERS/IoT-Data/json")
 
 def on_message(client, userdata, msg):
+    global throughput_count
+    process_start = time.time()
+
     # Parse the incoming MQTT message payload
     json_data = json.loads(msg.payload)
 
@@ -193,7 +226,19 @@ def on_message(client, userdata, msg):
     connected_devices[node]["state"] = predicted
     connected_devices[node]["timestamp"] = node_timestamp
 
-    asyncio.run(mqtt_queue.put(connected_devices))
+    process_end = time.time()
+    throughput_count += 1
+    latencies.append(process_end - process_start)
+
+    # Print metrics periodically
+    throughput_message = calculate_throughput()
+    avg_latency_message = calculate_average_latency()
+    metrics = {
+        "latency": avg_latency_message,
+        "throughput": throughput_message
+    }
+
+    asyncio.run(mqtt_queue.put({ "sensor_data": connected_devices, "metric": metrics }))
 
 def mqtt_worker():
     mqtt_client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)

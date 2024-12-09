@@ -3,6 +3,7 @@ let socket;
 let reconnectInterval = 1000;
 const systemConfiguration = {
     data: {},
+    metric: {},
     isMonitoring: false,
     lastUpdate: null
 };
@@ -111,10 +112,15 @@ const createWebSocket = () => {
     socket.onmessage = function(event) {
         console.log(JSON.parse(event.data));
         try {
-            if (Object.keys(event.data).length > 0) {
-                systemConfiguration.data = JSON.parse(event.data); // Parse the JSON data from the server
+            if (Object.keys(JSON.parse(event.data)).length > 0) {
+                const response = JSON.parse(event.data);
+                const data = response.sensor_data;
+                const metric = response.metric;
+                systemConfiguration.data = data; // Parse the JSON data from the server
+                systemConfiguration.metric = metric;
             } else {
                 systemConfiguration.data = {};
+                systemConfiguration.metric = {};
             }
         } catch(err) {
             systemConfiguration.data = {};
@@ -168,14 +174,21 @@ monitorToggle.addEventListener('click', (event) => {
 
 function updateSystemWatch() {
     const watchElement = document.getElementById('system-watch');
+    const latElement = document.querySelector(".latency");
+    const tpElement = document.querySelector(".through-put");
 
     // Get the current time and format it
     const now = new Date();
     const formattedTime = now.toLocaleTimeString(); // e.g., "3:45:12 PM"
-    const formattedDate = now.toLocaleDateString(); // e.g., "11/25/2024"
+    // const formattedDate = now.toLocaleDateString(); // e.g., "11/25/2024"
+    const hasKeys = Object.keys(systemConfiguration.metric).length > 0 ? true : false;
+    const latency = !systemConfiguration.isMonitoring ? "" : (hasKeys ? systemConfiguration.metric["latency"] : "")
+    const throughPut = !systemConfiguration.isMonitoring ? "" : (hasKeys ? systemConfiguration.metric["throughput"] : "")
 
     // Display the time and date in the watch element
     watchElement.textContent = `${formattedTime}`;
+    latElement.textContent = `${latency}`;
+    tpElement.textContent = `${throughPut}`;
 }
 
 setInterval(updateSystemWatch, 1000);
